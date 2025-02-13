@@ -1,0 +1,127 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+<PageTitle>Home</PageTitle>
+
+<div class="game-container">
+    <div class="header-container">
+        <h1 class="header">Крестики нолики</h1>
+
+        <div class="@(string.IsNullOrEmpty(winner) ? "info-text" : "info-text-win")">
+            @if (!string.IsNullOrEmpty(winner))
+            {
+                if (winner == "Ничья")
+                {
+                    <p>Ничья!</p>
+                }
+                else
+                {
+                    <p>Игрок @winner победил!</p>
+                }
+            }
+            else
+            {
+                <p>Текущий игрок: @currentPlayer</p>
+            }
+        </div>
+    </div>
+    <div class="tic-tac-toe">
+        @if (string.IsNullOrEmpty(winner))
+        {
+            @for (int i = 0; i < 3; i++)
+            {
+                <div class="row">
+                    @for (int j = 0; j < 3; j++)
+                    {
+                        int index = i * 3 + j;
+                        <div class="cell"
+                        @onclick="() => MakeMove(index)">
+                            <p class="cell-value">@board[index]</p>
+
+                        </div>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            @for (int i = 0; i < 3; i++)
+            {
+                <div class="row">
+                    @for (int j = 0; j < 3; j++)
+                    {
+                        int index = i * 3 + j;
+                        @if (winningCombinationResult != null && winningCombinationResult.Contains(index))
+                        {
+                            <div class="cell-win">
+                                <p class="cell-value">@board[index]</p>
+
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="cell">
+                                <p class="cell-value">@board[index]</p>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        }
+    </div>
+
+    <button class="glow-on-hover" @onclick="ResetGame">Начать заново!</button>
+
+</div>
+
+@code {
+    private string[] board = new string[9] { "", "", "", "", "", "", "", "", "" };
+    private string currentPlayer = "X";
+    private string? winner;
+    int[]? winningCombinationResult = null;
+
+    private void MakeMove(int index)
+    {
+        if (!string.IsNullOrEmpty(board[index]) || winner != null)
+            return;
+
+        board[index] = currentPlayer;
+
+        if (CheckWin(currentPlayer, out winningCombinationResult))
+        {
+            winner = currentPlayer;
+        }
+        else if (board.All(cell => cell != ""))
+        {
+            winner = "Ничья";
+        }
+        else
+        {
+            currentPlayer = currentPlayer == "X" ? "O" : "X";
+        }
+
+    }
+
+    private bool CheckWin(string player, out int[]? winningCombinationFound)
+    {
+        int[][] winningCombinations =
+        {
+            new[] { 0, 1, 2 }, new[] { 3, 4, 5 }, new[] { 6, 7, 8 },
+            new[] { 0, 3, 6 }, new[] { 1, 4, 7 }, new[] { 2, 5, 8 },
+            new[] { 0, 4, 8 }, new[] { 2, 4, 6 }
+    };
+
+        winningCombinationFound = winningCombinations
+                                        .FirstOrDefault(combination => combination
+                                            .All(index => board[index] == player));
+
+        return winningCombinationFound != null;
+    }
+
+    private void ResetGame()
+    {
+        board = new string[9] { "", "", "", "", "", "", "", "", "" };
+        currentPlayer = "X";
+        winner = null;
+    }
+}
