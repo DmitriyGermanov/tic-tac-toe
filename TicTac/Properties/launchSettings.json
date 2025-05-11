@@ -28,6 +28,11 @@
       },
       "publishAllPorts": true,
       "useSSL": true
+    },
+    "Release": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:5130"
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json"

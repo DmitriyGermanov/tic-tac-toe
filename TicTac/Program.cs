@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using TicTac.Components;
 
 namespace TicTac
@@ -18,6 +19,7 @@ namespace TicTac
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Error");
+                StaticWebAssetsLoader.UseStaticWebAssets(app.Environment, app.Configuration);
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
